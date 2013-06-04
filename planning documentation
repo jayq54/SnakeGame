@@ -1,0 +1,130 @@
+TEAM SNAKX
+
+Oduro Agyei-Boateng
+
+Samuel Adusei
+
+James Quarshie
+
+Albert Atchurey
+
+
+Project Planning Documentation
+
+
+Product Description
+
+Snakx is a Java based educational game that encourages adolescents to learn about preselected subjects as they engage in game-play.
+
+
+Users and Use Case
+
+
+Children at the elementary school level. Say during break time in school the game through its multi- player option engages two kids behind a school computer and provides a fun and educative way to spend their break time.
+
+
+Project Scope
+
+
+Within the next week and a half the product should have advanced to a presentable stage.
+
+The group will look to have a market ready product that includes:
+
+Snakx Java Based Game with
+
+Running Desktop Application
+
+A friendly easily operated GUI
+
+
+Time requirements
+
+Project time-line will be completed tomorrow (assigned to Albert)
+
+
+System requirements
+
+Programming language: Java
+
+IDE: Eclipse/NetBeans
+
+Repository: SnakeGame
+
+
+Skill set
+
+Will be documented tomorrow after team has conducted some research (assigned to Albert and Oduro)
+
+Task Assignments
+
+Will be documented tomorrow after skill set is defined
+
+
+
+Product Scope
+
+
+Game Play Description
+
+Players compete for food to make snakes grow. player with longest snake after a given amount of time wins . When any player crashes they get the opportunity to save themselves by answering a question (subject options will be provided before the start of every game session) correctly or lose the game.
+
+Speed of the snake is determined by game level and remains constant for that level. The higher the level the higher the speed
+
+Game Play option
+
+>Player Option:
+
+Single Player: One Snake
+
+Two Player: Two Snakes Compete
+
+>Subject option
+
+Provide academic questions under different subjects (math, geometry, current affairs, general knowledge)
+
+>Sound option
+
+>Start,Pause, Play, Restart
+
+>Game Time Option
+
+>Two levels of game play (with distinction)
+
+Level One: The Snake moves at a constant speed
+
+Level two: The Snake moves at a speed significantly greater than the Previous level
+
+Technical Requirements:
+
+>Keyboard Input
+
+Single Player(Player One) Main Controls
+
+Up: Up Arrow Key
+
+Down: Down Arrow Key
+
+Right: Right Arrow Key
+
+Left: Left Arrow Key
+
+Player Two
+
+Up: W key
+
+Down: S key
+
+Right: D key
+
+Left: A key
+
+*Questions Are answered by keyboard input*
+
+**Have available the Snakx source code as open source
+
+Class Diagrams: Assigned to be completed tonight (by Oduro)
+
+
+Flow Charts: Assigned to be completed tonight( by James and Samuel)
+
+

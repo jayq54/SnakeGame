@@ -1,0 +1,8 @@
+layouts:
+-board class
+-directional class
+-menu bar class
+-snake class
+-option class
+-level class
+-subject class

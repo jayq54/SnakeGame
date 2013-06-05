@@ -1,0 +1,62 @@
+Stakeholders 
+
+
+
+Who are your stakeholders?
+
+Project Developers 
+Game developers (Software Developing Companies)
+Gaming Companies (On the Hardware Side)
+Adolescents
+Teachers
+Ministry Of Education
+Programmers (Looking to Improve the code)
+
+
+
+
+Project Description From Each POV
+
+From the developers' POV the game has to meet functional requirements.
+Code is coherent. (Nonredundant, Commented, etc )
+No bugs(minimal) commits to the goals layed out.
+
+From the User end
+Delivers on promises made
+Visually appealing
+Ease of Use
+Compatability
+
+
+
+
+Design Patterns
+
+
+
+Which design pattern is best for your project?
+
+
+Peer-to-peer: Advanced game mode that allows communication between two different systems
+Event-Driven: Action Reaction (I/O)
+Plug-in
+
+
+
+
+
+Implications
+
+
+What hardware are we working?
+PC/Laptop
+What OS?
+Windows
+
+Program Interactions?
+Audio
+Keyboard
+Clock
+
+How will these factors affect Product design?
+Give the user the ability to adjust the default search directory for required system components.

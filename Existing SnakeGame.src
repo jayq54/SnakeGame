@@ -199,5 +199,6 @@ void restart()
 float sinecolor(float percent)
 {
   float slime=(sin(radians((((time +(255*percent)) % 255)/255)*360)))*255;
+  
   return slime;
 }

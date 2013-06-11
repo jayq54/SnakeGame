@@ -1,0 +1,119 @@
+/**
+ *  SnakeGame
+ * =========
+
+ * For the STDIO Course
+ * /
+ 
+
+/**
+ * Creating a Skeleton for the Snake Game
+ * /
+ 
+
+
+/**
+ * Import the Necessary Java Libraries
+ * /
+ 
+import java.util.LinkedList;    //
+import java.util.Random;    // Random number generator
+import java.awt.event.KeyEvent;   // Event oriented library
+import java.awt.event.KeyAdapter;   // IO oriented library
+import java.awt.*;    // import all from java.awt
+
+import javax.swing.JFrame;   // Window Frame wizard
+
+/**
+ * Create Snakx Class.
+ */
+ 
+public class Snakx extends JFrame {
+
+/**
+ * Create the BoardPanel.
+ */
+ private BoardPanel board;
+
+
+/**
+ * Create the MenuBar(SidePanel).
+ */
+ private SidePanel menuBar
+
+
+/**
+ * Random number Generator for placing "Fruit".
+ */
+ private Random random  = new Random();
+
+
+/**
+ * Hold The Current Score  
+ */
+ private int score;
+
+
+/**
+ * Minimum lenght of Snake.
+ * This starts the Gamer with a fair sized snake to begin the game.
+ */
+ private static final int MIN_SNAKE_LENGTH = 5;
+
+
+/**
+ * Default Running Speeds
+ * /
+ private final int SNAKE_MAX_SPEED = 30;
+ private final int SNAKE_MID_SPEED = 75;
+ private final int SNAKE_MIN_SPEED = 110;
+
+
+/**
+ * The maximum number of directions that we can have polled in the direction list.
+ */
+ private static final int MAX_DIRECTIONS = 3;
+
+/**
+ * Use enum to set GameModes.
+ */ 
+ private enum GAME_MODE {FREE, BORDER};    //??Creates DataType Game_Mode
+ 
+
+
+/**
+ * Use enum to set GameLevels.
+ */ 
+ private enum GAME_LEVEL {LEVEL_I, LEVEL_II, LEVEL_III};    //??Creates DataType Game_Level
+
+
+/**
+ * Select Default Speed && Mode.
+ */
+private int startSpeed = SNAKE_MIN_SPEED;
+private GAME_MODE startMode = GAME_MODE.FREE;
+private GAME_LEVEL startLevel = GAME_LEVEL.LEVEL_I;
+
+
+/**
+ * The Clock instance for handling the game logic.
+ */
+ private Clock logicTimer;
+
+/**
+ * Check Game Status.
+ */ 
+ private boolean newGame;
+ private boolean gameOver;
+ private boolean paused;
+
+/**
+ * List that contains the points for the snake.
+ */
+ private Linkedlist<Point> snakx;
+
+/**
+ * List that contains the queued directions.
+ */
+ private LinkedList<Direction> directions;
+

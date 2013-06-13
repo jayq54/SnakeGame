@@ -1,119 +1,767 @@
 /**
- *  SnakeGame
- * =========
-
- * For the STDIO Course
- * /
- 
-
-/**
- * Creating a Skeleton for the Snake Game
- * /
- 
-
-
-/**
- * Import the Necessary Java Libraries
- * /
- 
-import java.util.LinkedList;    //
-import java.util.Random;    // Random number generator
-import java.awt.event.KeyEvent;   // Event oriented library
-import java.awt.event.KeyAdapter;   // IO oriented library
-import java.awt.*;    // import all from java.awt
-
-import javax.swing.JFrame;   // Window Frame wizard
-
-/**
- * Create Snakx Class.
+ * Import EveryThing we might Need For Test
  */
- 
-public class Snakx extends JFrame {
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+import java.util.*;
 
 /**
- * Create the BoardPanel.
+ * @author Hasib
  */
- private BoardPanel board;
+public class Test {
+    // GUI components
+    
+ /**
+	 * Surface on Which the Game is Played.
+	 */
+    private JPanel board; 
+    private JPanel side;
+	
+	/**
+	 * Builds the square blocks of the Snake.
+	 */
+    private JButton[] snakeBodyPart;
+    @SuppressWarnings("unused")
+	private JButton fruit;
+	
+	/**
+	 * venom instance.
+	 */
+    private JButton venom;
+	
+	/**
+	 * ScoreViewer Instance. 
+	 * This allows the game to display the current score.
+	 */
+    private JTextArea scoreViewer;
+
+    // Declaration of Constants
+	
+	/**
+	 * Default Running Speeds of the Snake.
+	 */
+    private final int SNAKE_MAX_SPEED = 25;     //Speed of Snake Level()
+    private final int SNAKE_MID_SPEED = 80;		//Speed of Snake Level()
+    private final int SNAKE_MIN_SPEED = 100;		//Speed of Snake Level()
+	
+	/**
+	 * Board Dimensions.
+	 */
+    private final int BOARD_WIDTH = 500;
+    private final int BOARD_HEIGHT = 250;
+	
+	/**
+	 * ScoreBoard Dimensions.
+	 */
+    private final int SCORE_BOARD_HEIGHT = 20;
+	
+	/**
+	 * Creates A body to accompany the head of the snake.
+	 */ 
+    private final int SNAKE_LENGTH_DEFAULT = 3;             //Creates Four Squares as the Default length of the Snake 
+	
+	/**
+	 * Sets pixel size for Snake also doubles as pixel size of Food.
+	 */	
+    private final int SNAKE_BODY_PART_SQURE = 5;  
+	
+	/**
+	 * Sets Pixel size of Bonus Food.
+	 */
+    private final int BONUS_FOOD_SQURE = 9;
+	
+	/**
+	 * ????
+	 */
+    private final Point INIT_POINT = new Point(100, 150);
+
+    // Declaring Others values
+	
+	/**
+	* Use enum To set Three GameModes.
+	*/
+    private enum GAME_MODE {FREE, BORDER};       //Possible Game Types
+    
+    
+    //private enum GAME_LEVEL {LEVEL_I, LEVEL_II, LEVEL_III};
+	
+	/**
+	 * SelectSpeed sets a default Snake running speed for the Game.
+	 */
+    private int selectedSpeed = SNAKE_MID_SPEED; //Default Speed
+	
+	/**
+	 * Sets a default GameMode in which the Game runs.
+	 */
+    private GAME_MODE selectedGameMode = GAME_MODE.FREE; //Default Game Mode
+    
+    //private GAME_LEVEL selectedGameLevel = GAME_LEVEL.LEVEL_I; //Default Game Level
+	
+	/**
+	 * The Snake should know how long it is before and after Eating.
+	 */
+    private int totalBodyPart;
+	
+	/**
+	 * ????
+	 */
+    private int directionX;
+	
+	/**
+	 * ????
+	 */
+    private int directionY;
+	
+	/**
+	 * Variable that holds Game score.
+	 */
+    private int score;
+	
+	/**
+	 * Allows the Bonus food to appear at a locations.
+	 */
+    private Point pointOfvenom = new Point();
+	
+	/**
+	 * Determine in which direction the snake is moving (True/False).
+	 */
+    private boolean isRunningLeft;
+    private boolean isRunningRight;
+    private boolean isRunningUp;
+    private boolean isRunningDown;
+	
+	/**
+	 * Determine if venom is Available(True/False).
+	 * venom can only be used once per cycle.
+	 */
+    private boolean isvenomAvailable;
+	
+	/**
+	 * Determine if Game is running.
+	 */
+    private boolean isRunning;
+	
+	/**
+	 * Random number generator for placing fruit.
+	 */
+    private Random random = new Random();
+	private JTextArea addStuff;
+	
+	/**
+	 * Creates a Snake instance within Snake.
+	 * Calls The Necessary functions to Initialize the Game.
+	 */
+    Test() {
+        //initialize all variables.
+        resetDefaultValues();
+        // initialize GUI.
+		// Create frame and Visual Components.
+        windowPane();
+        //Create Initial body of a snake.
+        createInitSnake();
+        // Initialize Thread.
+        isRunning = true;
+        createThread();
+		
+    }
+	
+	/**
+	 * Sets The Components of the Game.
+	 * Creates a new Window and sets the event outputs.
+	 */
+    public void windowPane() {
+	
+        /** 
+		 * Sets New Window Frame "Snake".
+		 */
+		JFrame frame = new JFrame("SnakxGame"); //super("snake"). As a possible simplification.
+		
+		/** 
+		 * Sets window Frame.
+         */		
+        frame.setSize(700, 330); ///frame.setSize(500, 330);
+
+        /** 
+		 * Create Menu bar with functions.
+		 */
+        setJMenueBar(frame);
+        
+		/**
+		 * Start of UI design.
+		 * Create Score Viewer as the contents of Score Panel.
+		 */
+        scoreViewer = new JTextArea("Score:: " + score);
+        scoreViewer.setEnabled(false);
+        scoreViewer.setBackground(Color.WHITE);
+        
+        addStuff = new JTextArea("Add stuff here");
+        addStuff.setEnabled(false);
+        addStuff.setBackground(Color.DARK_GRAY);
+        
+		/**
+		 * Creates Board surface on which the game is played.
+		 */
+        board = new JPanel();
+        side = new JPanel();
+        CardLayout cards = new CardLayout();
+        side.setLayout(cards);
+        side.setBounds(500, 0, BOARD_WIDTH,BOARD_HEIGHT);
+        side.setBackground(Color.DARK_GRAY);
+        side.add(addStuff);
+        board.setLayout(null);
+        board.setBounds(0, 0, BOARD_WIDTH, BOARD_HEIGHT);
+        board.setBackground(Color.BLACK);
+		
+		/**
+		 * Creates ScorePanel.
+		 * adds to it ScoreViewer to Display Current score.
+	     */
+		
+        JPanel scorePanel = new JPanel();
+        scorePanel.setLayout(new GridLayout(0, 1));
+        scorePanel.setBounds(0, BOARD_HEIGHT, BOARD_WIDTH, SCORE_BOARD_HEIGHT);
+        scorePanel.setBackground(Color.RED);
+        scorePanel.add(scoreViewer); // will contain score board
+        
+
+        /**
+		 * Adds The Necessary Contents to the Frame.
+		 */
+        frame.getContentPane().setLayout(null);
+        frame.getContentPane().add(side, BorderLayout.EAST);
+        frame.getContentPane().add(board);
+        frame.getContentPane().add(scorePanel);
+        frame.setVisible(true);
+        /**
+         * Can Add components to the board.
+         */
+        //board.add(side);
+		
+		/**
+		 * Default Close. 
+		 */
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+		/**
+		 * Adds New Key Listener. 
+		 * Reads KeyBoard input from the User.
+		 * DirectionKeyPressed event responds to the directional Keys.
+		 */
+		frame.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                DirectionKeyPressed(e);
+            }
+        });
+        frame.setResizable(true);      //Set Frame to fixed size
+        
+    }
+   
+    
+    /**
+	 * Creating The Menu Bar instance
+	 */
+    public void setJMenueBar(JFrame frame) {
+        
+		/**
+		 * Creates The Menu bar
+		 */
+        JMenuBar mymbar = new JMenuBar();
+		
+        /**
+		 * Creates Menu Game.
+		 */
+        JMenu game = new JMenu("Game");
+		
+		/**
+		 * Creates Menu Item.
+		 */
+        JMenuItem newgame = new JMenuItem("New Game");
+        JMenuItem exit = new JMenuItem("Exit");
+        
+        /**
+		 * Add New ActionListener
+		 * NewGame Sequence.
+		 */
+        newgame.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                startNewGame();
+            }
+        });
+        
+        /**
+		 * Adds New ActionListener
+		 * Exit Sequence
+		 */
+        exit.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        });
+		
+		/** 
+		 * Adds Menu Game and It's contents to the MenuBar.
+		 */
+        game.add(newgame);      //Puts an Option New Game within the Button "Game"
+        game.addSeparator();    // Inputs a Horizontal Line To Seperate the Text
+        game.add(exit);         //Puts the Option Exit within the "Game" Button
+        mymbar.add(game);       //Posts The Button "Game" on the Menu Bar
+
+       
+	   /**
+	    * Creates New Menu Mode.
+	    * Creates the available "Mode" selections for the game
+		*/
+        JMenu mode = new JMenu("Mode");
+		
+		/**
+		 * Creates Menu Item No Maze.
+		 */
+        JMenuItem free = new JMenuItem("Free");
+		
+		/**
+		 * Adds ActionListener For NoMaze.
+		 * If this GameMode is selected..startNewGame.
+		 */
+        free.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                selectedGameMode = GAME_MODE.FREE;
+                startNewGame(); 	
+            }
+        });
+		
+		/**
+		 * New Menu Item Border Maze.
+		 */
+        JMenuItem border = new JMenuItem("Border Maze");
+		
+		/**
+		 * New ActionListener For BorderMaze.
+		 * If this GameMode is selected..startNewGame.
+		 */
+        border.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                selectedGameMode = GAME_MODE.BORDER;
+                startNewGame();		
+            }
+        });
+        
+        /**
+		 * Adds The Menu options within the Menu "Type"
+		 */
+        mode.add(free);       
+        mode.add(border);
+		
+		/**
+		 * Adds Menu Type to Menu Bar.
+		 */
+        mymbar.add(mode);
+		
+       /**
+	    * Creates the Various Levels of the Game Available.
+		* If New Level is Selected..startNewGame
+		*/
+        JMenu level = new JMenu("Level");
+        JMenuItem level1 = new JMenuItem("Level I");
+        level1.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                selectedSpeed = SNAKE_MIN_SPEED;
+                startNewGame();
+            }
+        });
+		
+        JMenuItem level2 = new JMenuItem("Level II");
+        level2.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                selectedSpeed = SNAKE_MID_SPEED;
+                startNewGame();
+            }
+        });
+		
+        JMenuItem level3 = new JMenuItem("Level III");
+        level3.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                selectedSpeed = SNAKE_MAX_SPEED;
+                startNewGame();
+            }
+        });
+		
+		/**
+		 * Adds level options to Menu Level.
+		 */
+        level.add(level1);
+        level.add(level2);
+        level.add(level3);
+		
+		/** 
+		 * Adds Menu Level to Menu Bar
+		 */
+        mymbar.add(level);
+        
+		/**
+		 * Creates Help Menu.
+		 */
+        JMenu help = new JMenu("Help");
+		
+		/**
+		 * Creates Components of Help Menu.
+		 */ 
+        JMenuItem Designers = new JMenuItem("Designers");
+        JMenuItem instruction = new JMenuItem("Instraction");
+        
+		/**
+		 * Adds an ActionListener for HelpMenuItem Creator.
+		 */
+		Designers.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {                
+                JOptionPane.showMessageDialog(null, "Credit: Abdullah al hasb\nVersion: 1.0.1 \n Blog: http://imhasib.wordpress.com/");
+                JOptionPane.showMessageDialog(null, "ReDesign: WakandaNation Programming");
+            }
+        });
+		/**
+		 * Should add an ActionListener for HelpMenuItem Instructions.
+		 */
+		 
+		 
+		 /**
+		  * Adds HelpMenuItems to Help Menu.
+		  */
+        help.add(Designers);
+        help.add(instruction);
+		
+		/**
+		 * Adds Help Menu to Menu Bar.
+		 */
+        mymbar.add(help);
+
+		
+		/**
+		 * Adds Menu Bar To frame.
+		 */
+        frame.setJMenuBar(mymbar);
+        
+    }
+	
+	/**
+	 * Creates An Instance reset to set Default Values.
+	 */
+    public void resetDefaultValues() {
+        snakeBodyPart = new JButton[200]; // Creates an array with 200 indexies
+        totalBodyPart = SNAKE_LENGTH_DEFAULT;
+        directionX = SNAKE_BODY_PART_SQURE;
+        directionY = 0;
+        score = 0;
+        isRunningLeft = false;
+        isRunningRight = true;
+        isRunningUp = true;
+        isRunningDown = true;
+        isvenomAvailable = false;
+    }
+
+    void startNewGame() {
+		/**
+		 * Reset Game Board.
+		 */
+        resetDefaultValues();
+		
+		/**
+		 *??
+		 */
+        board.removeAll();
+       
+		
+		/**
+		 * Create initial Snake.
+		 */
+        createInitSnake();
+		
+		/**
+		 * Show Score = 0.
+		 */
+        scoreViewer.setText("Score==>" + score);
+		
+		/**
+		 * Let The Game Run.
+		 */
+        isRunning = true;
+    }
+
+    /**
+     * This method is responsible to initialize the snake with four body part.
+     */
+    public void createInitSnake() {
+        // Location of the snake's head.
+        int x = (int) INIT_POINT.getX();
+        int y = (int) INIT_POINT.getY();
+
+        // Initially the snake has three body part.
+        for (int i = 0; i < totalBodyPart; i++) {
+            snakeBodyPart[i] = new JButton();            
+            snakeBodyPart[i].setBounds(x, y, SNAKE_BODY_PART_SQURE, SNAKE_BODY_PART_SQURE);
+            snakeBodyPart[i].setBackground(Color.GRAY);     //Color of the Snake
+            board.add(snakeBodyPart[i]);
+            // Set location of the next body part of the snake.//
+            x = x - SNAKE_BODY_PART_SQURE;
+        }
+
+        // Creates the initial food.
+        createFood();
+    }
+
+    /**
+     * This method commits to create food for the snake.
+     * The most last part of this snake is treated as a food, which has not become a body part of the snake yet.
+     * This food will be the body part if and only if when snake head will touch it.
+    */
+    void createFood() {
+        int randomX = SNAKE_BODY_PART_SQURE + (SNAKE_BODY_PART_SQURE * random.nextInt(48));
+        int randomY = SNAKE_BODY_PART_SQURE + (SNAKE_BODY_PART_SQURE * random.nextInt(23));
+
+        snakeBodyPart[totalBodyPart] = new JButton();
+        snakeBodyPart[totalBodyPart].setEnabled(false);
+        snakeBodyPart[totalBodyPart].setBounds(randomX, randomY, SNAKE_BODY_PART_SQURE, SNAKE_BODY_PART_SQURE);
+        snakeBodyPart[totalBodyPart].setBackground(Color.green);     //Color of the food
+        board.add(snakeBodyPart[totalBodyPart]);
+        
+        
+
+        totalBodyPart++;
+    }
+
+    private void createvenom() {
+        venom = new JButton();
+        venom.setEnabled(false);
+        //Set location of the bonus food.
+        int venomLocX = SNAKE_BODY_PART_SQURE * random.nextInt(50);
+        int venomLocY = SNAKE_BODY_PART_SQURE * random.nextInt(25);
+
+        venom.setBounds(venomLocX, venomLocY, BONUS_FOOD_SQURE, BONUS_FOOD_SQURE);
+        venom.setBackground(Color.RED);     //Color of the Venom
+        pointOfvenom = venom.getLocation();
+        board.add(venom);
+        
+        
+        isvenomAvailable = true;
+    }
+
+    /**
+     * Process next step of the snake.
+     * And decide what should be done.
+     */
+    void processNextStep() {
+        boolean isBorderTouched = false;
+        // Generate new location of snake head.
+        int newHeadLocX = (int) snakeBodyPart[0].getLocation().getX() + directionX;
+        int newHeadLocY = (int) snakeBodyPart[0].getLocation().getY() + directionY;
+
+        // Set Next food Location to Most last part of the snake
+        int foodLocX = (int) snakeBodyPart[totalBodyPart - 1].getLocation().getX();
+        int foodLocY = (int) snakeBodyPart[totalBodyPart - 1].getLocation().getY();
+
+        //* Check does snake cross the border of the board?*//
+        if (newHeadLocX >= BOARD_WIDTH - SNAKE_BODY_PART_SQURE) {   //Upper(RIGHT) x-axis Bound
+            newHeadLocX = 0;
+            isBorderTouched = true;
+        } else if (newHeadLocX <= 0) {                              //Lower(LEFT) x-axis Bound
+            newHeadLocX = BOARD_WIDTH - SNAKE_BODY_PART_SQURE;
+            isBorderTouched = true;
+        } else if (newHeadLocY >= BOARD_HEIGHT - SNAKE_BODY_PART_SQURE) {
+            newHeadLocY = 0;
+            isBorderTouched = true;
+        } else if (newHeadLocY <= 0) {
+            newHeadLocY = BOARD_HEIGHT - SNAKE_BODY_PART_SQURE;
+            isBorderTouched = true;
+        }
+
+        //* Check has snake touched the food?*//
+        if (newHeadLocX == foodLocX && newHeadLocY == foodLocY) {
+            // Set score.
+            score += 5;
+            scoreViewer.setText("Score:: " + score);
+            //totalBodyPart++;
+
+            // Check bonus food should be given or not?
+            if (score % 50 == 0 && !isvenomAvailable) {
+                createvenom();
+            }
+            // Create new food.
+            createFood();
+        }
+
+        // Check has snake touched the bonus food?
+        if (isvenomAvailable &&
+                pointOfvenom.x <= newHeadLocX &&
+                pointOfvenom.y <= newHeadLocY &&
+                (pointOfvenom.x + SNAKE_BODY_PART_SQURE) >= newHeadLocX &&
+                (pointOfvenom.y + SNAKE_BODY_PART_SQURE) >= newHeadLocY) {
+            board.remove(venom);
+            score += 10;
+            scoreViewer.setText("Score ==>" + score);
+             /**
+              * Logic of how the Snake grows is held elsewhere
+              */
+            //totalBodyPart*=2;
+            isvenomAvailable = false;
+        }
+        
+        // Check is game over?
+        if(isGameOver(isBorderTouched, newHeadLocX, newHeadLocY)) {
+           scoreViewer.setText("GAME OVER:::	" + score);
+           isRunning = false;
+           return;
+        } else {
+            // Move the whole snake body to forward.
+            moveSnakeForword(newHeadLocX, newHeadLocY);
+            
+        }
+
+        board.repaint();
+    }
+
+    /**
+     * This method is responsible to detect is game over or not?
+     * Game should be over while snake is touched by any maze or by itself.
+     * If any one want to add new type just declare new GAME_TYPE enum value and put logic in this method.
+     * @param isBorderTouched
+     * @param headLocX
+     * @param headLocY
+     * @return
+     */
+    private boolean isGameOver(boolean isBorderTouched, int headLocX, int headLocY) {
+        switch(selectedGameMode) {
+            case BORDER:
+                if(isBorderTouched) {
+                    return true;
+                }
+                break;
+            //case TUNNEL:
+                // TODO put logic here...
+                //throw new UnsupportedOperationException();
+            default:
+                break;
+        }
+        /**
+         * if the Snake hits itself it's game over
+         */
+        for (int i = SNAKE_LENGTH_DEFAULT; i < totalBodyPart - 2; i++) {
+            Point partLoc = snakeBodyPart[i].getLocation();
+            System.out.println("("+partLoc.x +", "+partLoc.y+")  ("+headLocX+", "+headLocY+")");
+            if (partLoc.equals(new Point(headLocX, headLocY))) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Every body part should be placed to location of the front part.
+     * For example if part:0(100,150) , part: 1(90, 150), part:2(80,150) and new head location (110,150) then,
+       Location of part:2 should be (80,150) to (90,150), part:1 will be (90,150) to (100,150) and part:3 will be (100,150) to (110,150)
+     * This movement process should be start from the last part to first part.
+     * We must avoid the food that means most last body part of the snake.
+     * Notice that we write (totalBodyPart - 2) instead of (totalBodyPart - 1).
+     * (totalBodyPart - 1) means food and (totalBodyPart - 2) means tail.
+     * @param headLocX
+     * @param headLocY
+     */
+    public void moveSnakeForword(int headLocX, int headLocY) {
+        for (int i = totalBodyPart - 2; i > 0; i--) {						//loop through length of snake
+            Point frontBodyPartPoint = snakeBodyPart[i - 1].getLocation();//get location of preceding segment
+            snakeBodyPart[i].setLocation(frontBodyPartPoint);//Set location to preceding segment
+        }
+        snakeBodyPart[0].setBounds(headLocX, headLocY, SNAKE_BODY_PART_SQURE, SNAKE_BODY_PART_SQURE);
+    }
+    
+    
+    /**
+     * Modify the KeyEvent Code
+     * 
+     */
+
+    public void DirectionKeyPressed(KeyEvent e) {
+	
+		switch(e.getKeyCode()){
+		
+		case KeyEvent.VK_LEFT:
+		case KeyEvent.VK_NUMPAD4:
+        // snake should move to left when player presses left arrow
+			if (isRunningLeft == true) {
+				directionX = -SNAKE_BODY_PART_SQURE; // means snake moves left by 10 pixel
+				directionY = 0;
+				isRunningRight = false;     // means snake can't move from left to right(Go in reverse)
+				isRunningUp = true;         // means snake can move from down to up
+				isRunningDown = true;       // means snake can move from up to down
+            }
+			break;
+			
+        // snake should move to up when player pressed up arrow
+		
+		case KeyEvent.VK_UP:
+		case KeyEvent.VK_NUMPAD8:
+			if (isRunningUp == true) {
+				directionX = 0;
+				directionY = -SNAKE_BODY_PART_SQURE; // means snake move from down to up by 10 pixel
+				isRunningDown = false;     // means snake can move from up to down (Go In Reverse)
+				isRunningRight = true;     // means snake can move from left to right
+				isRunningLeft = true;      // means snake can move from right to left
+            }
+			break;
+        // snake should move to right when player pressed right arrow
+		case KeyEvent.VK_RIGHT:
+		case KeyEvent.VK_NUMPAD6:
+			if (isRunningRight == true) {
+				directionX = +SNAKE_BODY_PART_SQURE; // means snake move from left to right by 10 pixel
+				directionY = 0;
+				isRunningLeft = false;
+				isRunningUp = true;
+				isRunningDown = true;
+			}
+			break;
+        // snake should move to down when player pressed down arrow
+		case KeyEvent.VK_DOWN:
+		case KeyEvent.VK_NUMPAD2:	
+			if (isRunningDown == true ) {
+				directionX = 0;
+				directionY = +SNAKE_BODY_PART_SQURE; // means snake move from left to right by 10 pixel
+				isRunningUp = false;
+				isRunningRight = true;
+				isRunningLeft = true;
+			}
+			break;
+	    } 
+    }
+
+    private void createThread() {
+        // start thread
+        Thread thread = new Thread(new Runnable() {
+
+            public void run() {
+                runIt();
+            }
+        });
+        thread.start(); // go to runIt() method
+    }
+
+    public void runIt() {
+        while (true) {
+            if(isRunning) {
+                // Process what should be next step of the snake.
+                processNextStep();
+                try {
+                    Thread.sleep(selectedSpeed);
+                } catch (InterruptedException ie) {
+                    ie.printStackTrace();
+                }
+            }
+        }
+    }
 
 
-/**
- * Create the MenuBar(SidePanel).
- */
- private SidePanel menuBar
-
-
-/**
- * Random number Generator for placing "Fruit".
- */
- private Random random  = new Random();
-
-
-/**
- * Hold The Current Score  
- */
- private int score;
-
-
-/**
- * Minimum lenght of Snake.
- * This starts the Gamer with a fair sized snake to begin the game.
- */
- private static final int MIN_SNAKE_LENGTH = 5;
-
-
-/**
- * Default Running Speeds
- * /
- private final int SNAKE_MAX_SPEED = 30;
- private final int SNAKE_MID_SPEED = 75;
- private final int SNAKE_MIN_SPEED = 110;
-
-
-/**
- * The maximum number of directions that we can have polled in the direction list.
- */
- private static final int MAX_DIRECTIONS = 3;
-
-/**
- * Use enum to set GameModes.
- */ 
- private enum GAME_MODE {FREE, BORDER};    //??Creates DataType Game_Mode
- 
-
-
-/**
- * Use enum to set GameLevels.
- */ 
- private enum GAME_LEVEL {LEVEL_I, LEVEL_II, LEVEL_III};    //??Creates DataType Game_Level
-
-
-/**
- * Select Default Speed && Mode.
- */
-private int startSpeed = SNAKE_MIN_SPEED;
-private GAME_MODE startMode = GAME_MODE.FREE;
-private GAME_LEVEL startLevel = GAME_LEVEL.LEVEL_I;
-
-
-/**
- * The Clock instance for handling the game logic.
- */
- private Clock logicTimer;
-
-/**
- * Check Game Status.
- */ 
- private boolean newGame;
- private boolean gameOver;
- private boolean paused;
-
-/**
- * List that contains the points for the snake.
- */
- private Linkedlist<Point> snakx;
-
-/**
- * List that contains the queued directions.
- */
- private LinkedList<Direction> directions;
-
+public static void main(String[] args) {  
+	new Test();
+	//startNewGame();
+}
+}

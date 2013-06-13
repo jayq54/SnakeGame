@@ -13,7 +13,7 @@ import java.util.*;
 public class Test {
     // GUI components
     
- /**
+	/**
 	 * Surface on Which the Game is Played.
 	 */
     private JPanel board; 
@@ -60,7 +60,7 @@ public class Test {
 	/**
 	 * Creates A body to accompany the head of the snake.
 	 */ 
-    private final int SNAKE_LENGTH_DEFAULT = 3;             //Creates Four Squares as the Default length of the Snake 
+    private final int SNAKE_LENGTH_DEFAULT = 7;             //Creates Four Squares as the Default length of the Snake 
 	
 	/**
 	 * Sets pixel size for Snake also doubles as pixel size of Food.
@@ -142,7 +142,9 @@ public class Test {
 	 * Determine if Game is running.
 	 */
     private boolean isRunning;
-	
+    @SuppressWarnings("unused")
+	private boolean isPaused;
+    
 	/**
 	 * Random number generator for placing fruit.
 	 */
@@ -163,6 +165,7 @@ public class Test {
         createInitSnake();
         // Initialize Thread.
         isRunning = true;
+        isPaused = false;
         createThread();
 		
     }
@@ -278,11 +281,13 @@ public class Test {
 		/**
 		 * Creates Menu Item.
 		 */
+        JMenuItem pause = new JMenuItem("Pause");
         JMenuItem newgame = new JMenuItem("New Game");
         JMenuItem exit = new JMenuItem("Exit");
+        JMenuItem resume = new JMenuItem("Resume");
         
         /**
-		 * Add New ActionListener
+		 * Adds New ActionListener
 		 * NewGame Sequence.
 		 */
         newgame.addActionListener(new ActionListener() {
@@ -300,14 +305,44 @@ public class Test {
                 System.exit(0);
             }
         });
+        
+        /**
+         * Adds code for Pause sequence.
+         */
+        pause.addActionListener(new ActionListener(){
+        	public void actionPerformed(ActionEvent e) {
+        		isRunning = false;
+        		isPaused = true;
+        	}
+        	
+        
+        });
+        
+        
+        /**
+         * Adds code for Resume sequence.
+         */
+         resume.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+            		isRunning = true;
+            		isPaused = false;
+            		createThread();
+            	}
+            
+         });
 		
 		/** 
 		 * Adds Menu Game and It's contents to the MenuBar.
 		 */
         game.add(newgame);      //Puts an Option New Game within the Button "Game"
-        game.addSeparator();    // Inputs a Horizontal Line To Seperate the Text
+        game.addSeparator();    // Inputs a Horizontal Line To Separate the Text
+        game.add(pause);
+        game.addSeparator();    // Inputs a Horizontal Line To Separate the Text
+        game.add(resume);
+        game.addSeparator();
         game.add(exit);         //Puts the Option Exit within the "Game" Button
         mymbar.add(game);       //Posts The Button "Game" on the Menu Bar
+        
 
        
 	   /**
@@ -486,6 +521,8 @@ public class Test {
 		 * Let The Game Run.
 		 */
         isRunning = true;
+        isPaused = false;
+        createThread();
     }
 
     /**
@@ -500,12 +537,15 @@ public class Test {
         for (int i = 0; i < totalBodyPart; i++) {
             snakeBodyPart[i] = new JButton();            
             snakeBodyPart[i].setBounds(x, y, SNAKE_BODY_PART_SQURE, SNAKE_BODY_PART_SQURE);
-            snakeBodyPart[i].setBackground(Color.GRAY);     //Color of the Snake
+            snakeBodyPart[i].setBackground(Color.DARK_GRAY);     //Color of the Snake
             board.add(snakeBodyPart[i]);
             // Set location of the next body part of the snake.//
-            x = x - SNAKE_BODY_PART_SQURE;
+           x = x - SNAKE_BODY_PART_SQURE;
+           
+         
         }
-
+        
+        snakeBodyPart[0].setBackground(Color.GRAY);
         // Creates the initial food.
         createFood();
     }
@@ -677,7 +717,7 @@ public class Test {
     
     
     /**
-     * Modify the KeyEvent Code
+     * The KeyEvent Code
      * 
      */
 
@@ -731,6 +771,21 @@ public class Test {
 				isRunningLeft = true;
 			}
 			break;
+	
+		/**
+         * In the Event that the player Presses ENTER, 	
+		 * The game should first ask if the Player would like to Start a New Game.
+		 * If YES, startNewGame. If NO holdStation.
+		 */
+		case KeyEvent.VK_ENTER:	
+			if (isRunningDown == true ) {
+				directionX = 0;
+				directionY = +SNAKE_BODY_PART_SQURE; // means snake move from left to right by 10 pixel
+				isRunningUp = false;
+				isRunningRight = true;
+				isRunningLeft = true;
+			}
+			break;	
 	    } 
     }
 
@@ -747,7 +802,7 @@ public class Test {
 
     public void runIt() {
         while (true) {
-            if(isRunning) {
+            if(isRunning == true) {
                 // Process what should be next step of the snake.
                 processNextStep();
                 try {
@@ -762,6 +817,6 @@ public class Test {
 
 public static void main(String[] args) {  
 	new Test();
-	//startNewGame();
+	
 }
 }
